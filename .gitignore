@@ -1,0 +1,8 @@
+env/
+.vscode/
+migrations/
+
+*.pyc
+.DS_STORE
+*.sh
+
