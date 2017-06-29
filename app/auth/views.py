@@ -18,7 +18,7 @@ def register():
                             username=form.username.data,
                             first_name=form.first_name.data,
                             last_name=form.last_name.data,
-                            pw=form.password.data)
+                            plaintext_password=form.password.data)
 
         # add user to the database
         db.session.add(user)
@@ -48,16 +48,7 @@ def login():
         if user.verify_password(form.password.data):
             login_user(user)
             print "Login Success"
-            next = flask.request.args.get('next')   # Page user was trying to access
-            
-            # is_safe_url should check if the url is safe for redirects.
-            if not is_safe_url(next):
-                return flask.abort(400)
-
-            return flask.redirect(next or flask.url_for('home.dashboard'))
-            #return redirect(url_for('home.dashboard'))
-
-        # when login details are incorrect
+            return redirect(url_for('home.dashboard'))
         else:
             print "Login Fail"
             flash('Invalid email or password.')

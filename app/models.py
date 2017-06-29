@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 
 from . import db, login_manager, flask_bcrypt
 
@@ -17,19 +18,19 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(120), index=True, unique=True)
     username = db.Column(db.String(60), index=True, unique=True)
-    first_name = db.Column(db.String(60), index=True)
-    last_name = db.Column(db.String(60), index=True)
+    first_name = db.Column(db.String(60), index=True, nullable=True)
+    last_name = db.Column(db.String(60), index=True, nullable=True)
     _password = db.Column(db.Binary(60), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
-    def __init__(self, first_name, last_name, username, email, pw):
-        self.email = email
+    def __init__(self, username, email, first_name, last_name, plaintext_password):
         self.username = username
+        self.email = email
         self.first_name = first_name
         self.last_name = last_name
-        self._password = pw
+        self.password = plaintext_password
 
-    @property
+    @hybrid_property
     def password(self):
         """
         Prevent pasword from being accessed
@@ -38,14 +39,14 @@ class User(UserMixin, db.Model):
 
 
     @password.setter
-    def password(self, password):
+    def set_password(self, password):
         """
         Set password to a hashed password
         """
         print "PasswordSet"
         self._password = flask_bcrypt.generate_password_hash(password)
 
-
+    @hybrid_method
     def verify_password(self, password):
         """
         Check if hashed password matches actual password

@@ -30,10 +30,15 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <!-- Modify nav bar menu -->
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="{{ url_for('home.homepage') }}">Home</a></li>
-          <li><a href="{{ url_for('home.about') }}">About</a></li>
-          <li><a href="{{ url_for('auth.register') }}">Register</a></li>
-          <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+          {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('home.dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+            <li><a><i class="fa fa-user"></i>  Hi, {{ current_user.username }}!</a></li>
+          {% else %}
+            <li><a href="{{ url_for('home.homepage') }}">Home</a></li>
+            <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+            <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+          {% endif %}
         </ul>
       </div>
     </div>
